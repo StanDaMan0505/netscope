@@ -1,0 +1,11 @@
+# Environment-Variablen mit persönlichen Pfaden
+.env
+
+# JSON-Scan-Daten (werden lokal generiert)
+data/network_devices.json
+data/docker_containers.json
+
+# Docker / System
+.DS_Store
+*.log
+*.pid
