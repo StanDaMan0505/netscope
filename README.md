@@ -18,8 +18,8 @@ Visualisiert deine Infrastruktur – welche Geräte sind im Netzwerk, welche Doc
 
 ## 📸 Screenshot
 
-![netscope Dashboard](https://via.placeholder.com/1200x600/0d1117/58a6ff?text=netscope+Dashboard)
-*Ersetze diesen Platzhalter mit einem echten Screenshot deines Dashboards*
+<img width="1493" height="758" alt="image" src="https://github.com/user-attachments/assets/c11a98c9-f595-40d8-ad39-36570ffa1db2" />
+
 
 ---
 
