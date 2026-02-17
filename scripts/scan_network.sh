@@ -21,17 +21,24 @@ set -euo pipefail
 OUTPUT_DIR="${1:-../data}"
 OUTPUT_FILE="${OUTPUT_DIR}/network_devices.json"
 
-# Subnetz automatisch ermitteln (erstes nicht-loopback Interface)
-SUBNET=$(ip -o -f inet addr show \
-  | awk '$2 != "lo" {print $4; exit}')
+# Subnetz automatisch ermitteln und in Netzwerkadresse umwandeln
+DETECTED_IP=$(ip -o -f inet addr show | awk '$2 != "lo" {print $4; exit}')
 
-if [[ -z "$SUBNET" ]]; then
+if [[ -z "$DETECTED_IP" ]]; then
   echo "❌  Kein Subnetz gefunden. Bitte SUBNET manuell setzen."
   echo "    Beispiel: SUBNET=192.168.0.0/24 ./scan_network.sh"
   exit 1
 fi
 
-# Manuelle Überschreibung möglich: SUBNET=192.168.1.0/24 ./scan_network.sh
+# IP und Maske extrahieren (z.B. 192.168.0.99/24)
+IP_PART="${DETECTED_IP%/*}"    # Alles vor dem / → 192.168.0.99
+MASK_PART="${DETECTED_IP#*/}"  # Alles nach dem / → 24
+
+# Netzwerkadresse: erste 3 Oktette + .0 (vereinfacht für /24 Netze)
+NETWORK_BASE="${IP_PART%.*}"   # 192.168.0
+SUBNET="${NETWORK_BASE}.0/${MASK_PART}"
+
+# Manuelle Überschreibung möglich
 SUBNET="${SUBNET_OVERRIDE:-$SUBNET}"
 
 SCAN_TIME=$(date)
@@ -42,10 +49,32 @@ echo "    Ausgabe: ${OUTPUT_FILE}"
 echo ""
 
 # ── nmap ausführen ────────────────────────────────────────────────────────────
-XML_TMP=$(mktemp /tmp/nmap_scan_XXXXXX.xml)
-trap 'rm -f "$XML_TMP"' EXIT
+# Temp-Datei mit vorhersehbarem Namen (nmap läuft als root, braucht Schreibrechte)
+XML_TMP="/tmp/netscope_scan_$$.xml"
 
-sudo nmap -sn --resolve-all -oX "$XML_TMP" "$SUBNET" > /dev/null 2>&1
+# Falls alte Datei existiert, aufräumen
+sudo rm -f "$XML_TMP"
+
+echo "  nmap läuft (scannt $SUBNET) ..."
+
+# nmap ausführen - läuft als root und erstellt die XML-Datei
+NMAP_OUTPUT=$(sudo nmap -sn --resolve-all -oX "$XML_TMP" "$SUBNET" 2>&1)
+NMAP_EXIT=$?
+
+if [[ $NMAP_EXIT -ne 0 ]] || [[ ! "$NMAP_OUTPUT" =~ "Nmap done" ]]; then
+  echo "❌  nmap-Fehler (Exit: $NMAP_EXIT)"
+  echo "$NMAP_OUTPUT" | tail -5
+  sudo rm -f "$XML_TMP"
+  exit 1
+fi
+
+# Prüfen ob XML-Datei Inhalt hat
+if [[ ! -s "$XML_TMP" ]]; then
+  echo "❌  nmap hat keine Daten geschrieben (XML ist leer)."
+  echo "    Temp-Datei: $XML_TMP"
+  sudo rm -f "$XML_TMP"
+  exit 1
+fi
 
 echo "✓  Scan abgeschlossen, verarbeite Ergebnisse …"
 
@@ -140,6 +169,9 @@ with open(out_file, "w", encoding="utf-8") as f:
 
 print(f"  ✓  {len(devices)} Geräte gefunden → {out_file}")
 PYEOF
+
+# Temp-Datei aufräumen (braucht sudo da von nmap als root erstellt)
+sudo rm -f "$XML_TMP"
 
 echo ""
 echo "✅  network_devices.json aktualisiert."
