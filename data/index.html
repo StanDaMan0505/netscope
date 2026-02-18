@@ -6,6 +6,7 @@
   <title>Netzwerk-Inventar — Infrastruktur-Übersicht</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
   <style>
+    /* ── Dark theme (default) ──────────────────────────────────────────── */
     :root {
       --bg: #0d1117;
       --surface: #161b22;
@@ -25,6 +26,34 @@
       --purple: #bc8cff;
       --purple-dim: rgba(188,140,255,0.12);
       --red: #f85149;
+      --grid-line: rgba(88,166,255,0.02);
+      --toggle-bg: #21262d;
+      --toggle-hover: #30363d;
+    }
+
+    /* ── Light theme ───────────────────────────────────────────────────── */
+    html[data-theme="light"] {
+      --bg: #f6f8fa;
+      --surface: #ffffff;
+      --surface-2: #f0f3f6;
+      --border: #d0d7de;
+      --border-accent: #b0bbc5;
+      --text: #1f2328;
+      --text-muted: #57606a;
+      --text-subtle: #a8b0ba;
+      --accent: #0969da;
+      --accent-dim: rgba(9,105,218,0.08);
+      --accent-glow: rgba(9,105,218,0.15);
+      --green: #1a7f37;
+      --green-dim: rgba(26,127,55,0.1);
+      --orange: #9a6700;
+      --orange-dim: rgba(154,103,0,0.1);
+      --purple: #8250df;
+      --purple-dim: rgba(130,80,223,0.1);
+      --red: #cf222e;
+      --grid-line: rgba(9,105,218,0.04);
+      --toggle-bg: #eaeef2;
+      --toggle-hover: #d0d7de;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,6 +64,7 @@
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
+      transition: background 0.25s, color 0.25s;
     }
 
     body::before {
@@ -42,8 +72,8 @@
       position: fixed;
       inset: 0;
       background-image:
-        linear-gradient(rgba(88,166,255,0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(88,166,255,0.02) 1px, transparent 1px);
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
       background-size: 48px 48px;
       pointer-events: none;
       z-index: 0;
@@ -52,7 +82,7 @@
     .page-wrap { position: relative; z-index: 1; }
 
     header {
-      background: linear-gradient(180deg, #0d1117 0%, transparent 100%);
+      background: linear-gradient(180deg, var(--bg) 0%, transparent 100%);
       border-bottom: 1px solid var(--border);
       padding: 28px 40px 24px;
       display: flex;
@@ -63,6 +93,7 @@
       top: 0;
       z-index: 50;
       backdrop-filter: blur(12px);
+      transition: border-color 0.25s;
     }
 
     .header-left { display: flex; align-items: center; gap: 14px; }
@@ -75,8 +106,9 @@
       background: var(--accent-dim);
       box-shadow: 0 0 16px var(--accent-glow);
       flex-shrink: 0;
+      transition: background 0.25s, box-shadow 0.25s, border-color 0.25s;
     }
-    .logo-mark svg { width: 20px; height: 20px; }
+    .logo-mark svg { width: 20px; height: 20px; transition: stroke 0.25s; }
 
     .header-title {
       font-family: 'DM Serif Display', serif;
@@ -93,6 +125,14 @@
       font-family: 'DM Mono', monospace;
     }
 
+    /* ── Header right: controls ────────────────────────────────────────── */
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
     .scan-badge {
       font-family: 'DM Mono', monospace;
       font-size: 0.7rem;
@@ -102,9 +142,38 @@
       border-radius: 6px;
       padding: 5px 10px;
       letter-spacing: 0.04em;
+      transition: background 0.25s, border-color 0.25s;
     }
     .scan-badge span { color: var(--green); }
 
+    /* ── Control buttons ───────────────────────────────────────────────── */
+    .ctrl-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      background: var(--toggle-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      padding: 0 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      letter-spacing: 0.04em;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      user-select: none;
+      height: 30px;
+    }
+    .ctrl-btn:hover {
+      background: var(--toggle-hover);
+      border-color: var(--border-accent);
+      color: var(--text);
+    }
+    .ctrl-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+    /* ── Stats row ─────────────────────────────────────────────────────── */
     .stats-row {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
@@ -125,7 +194,7 @@
       padding: 16px;
       position: relative;
       overflow: hidden;
-      transition: border-color 0.2s, transform 0.2s;
+      transition: border-color 0.2s, transform 0.2s, background 0.25s, box-shadow 0.2s;
     }
     .stat-card:hover {
       border-color: var(--border-accent);
@@ -179,6 +248,7 @@
       border: 1px solid var(--border);
       border-radius: 12px;
       overflow: hidden;
+      transition: background 0.25s, border-color 0.25s;
     }
 
     .section-header {
@@ -188,6 +258,7 @@
       align-items: center;
       justify-content: space-between;
       background: var(--surface-2);
+      transition: background 0.25s, border-color 0.25s;
     }
     .section-title {
       font-family: 'DM Serif Display', serif;
@@ -211,6 +282,7 @@
       padding: 10px 16px;
       border-bottom: 1px solid var(--border);
       background: var(--bg);
+      transition: background 0.25s, border-color 0.25s;
     }
     .search-input {
       width: 100%;
@@ -222,7 +294,7 @@
       font-size: 0.75rem;
       padding: 6px 10px;
       outline: none;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, background 0.25s, color 0.25s;
     }
     .search-input:focus { border-color: var(--accent); }
     .search-input::placeholder { color: var(--text-subtle); }
@@ -234,6 +306,7 @@
     thead tr {
       background: var(--surface-2);
       position: sticky; top: 0; z-index: 5;
+      transition: background 0.25s;
     }
     th {
       padding: 9px 14px;
@@ -346,7 +419,7 @@
       background: var(--purple-dim);
       box-shadow: 0 0 0 1px rgba(188,140,255,0.2);
     }
-    .stat-card { cursor: pointer; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s; }
+    .stat-card { cursor: pointer; }
     .stat-card.blue.active   { box-shadow: 0 0 0 2px var(--accent),  0 0 18px var(--accent-glow); }
     .stat-card.green.active  { box-shadow: 0 0 0 2px var(--green),   0 0 18px rgba(63,185,80,0.25); }
     .stat-card.orange.active { box-shadow: 0 0 0 2px var(--orange),  0 0 18px rgba(210,153,34,0.25); }
@@ -402,6 +475,7 @@
       font-family: 'DM Mono', monospace;
       border-top: 1px solid var(--border);
       letter-spacing: 0.04em;
+      transition: border-color 0.25s;
     }
 
     @media (max-width: 900px) {
@@ -409,6 +483,7 @@
       .main-content { grid-template-columns: 1fr; }
       header { padding: 18px 20px; flex-direction: column; align-items: flex-start; }
       .stats-row, .main-content { padding-left: 20px; padding-right: 20px; }
+      .header-right { flex-wrap: wrap; }
     }
   </style>
 </head>
@@ -426,11 +501,33 @@
         </svg>
       </div>
       <div>
-        <div class="header-title">Infrastruktur-Übersicht</div>
-        <div class="header-subtitle">Netzwerk &amp; Container Inventar · 192.168.0.x</div>
+        <div class="header-title" data-i18n="headerTitle">Infrastruktur-Übersicht</div>
+        <div class="header-subtitle" data-i18n="headerSubtitle">Netzwerk &amp; Container Inventar · 192.168.0.x</div>
       </div>
     </div>
-    <div class="scan-badge" id="scan-timestamp-badge"><span>●</span> <span id="scan-timestamp">Lade Daten …</span></div>
+    <div class="header-right">
+      <div class="scan-badge"><span>●</span> <span id="scan-timestamp" data-i18n="loading">Lade Daten …</span></div>
+      <button class="ctrl-btn" id="lang-btn" onclick="toggleLang()" title="Sprache / Language">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        <span id="lang-label">EN</span>
+      </button>
+      <button class="ctrl-btn" id="theme-btn" onclick="toggleTheme()" title="Theme">
+        <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+        <svg id="icon-sun" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <span id="theme-label">☀</span>
+      </button>
+    </div>
   </header>
 
   <div class="stats-row" id="stats-row"></div>
@@ -443,17 +540,23 @@
             <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
             <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
           </svg>
-          Netzwerk-Geräte
+          <span data-i18n="sectionNetwork">Netzwerk-Geräte</span>
         </div>
         <span class="badge" id="net-badge">—</span>
       </div>
       <div class="filter-bar">
         <input class="search-input" type="text" id="net-search" placeholder="Filtern nach IP, Hostname, Typ…" oninput="onNetSearch(this.value)" />
       </div>
-      <div class="filter-hint" id="net-filter-hint" style="display:none">Aktiver Typ-Filter: <span class="hl-blue" id="net-filter-label"></span> &nbsp;·&nbsp; Klick zum Aufheben</div>
+      <div class="filter-hint" id="net-filter-hint" style="display:none">
+        <span data-i18n="activeTypeFilter">Aktiver Typ-Filter:</span> <span class="hl-blue" id="net-filter-label"></span> &nbsp;·&nbsp; <span data-i18n="clickToRemove">Klick zum Aufheben</span>
+      </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>IP-Adresse</th><th>Hostname</th><th>Gerätetyp</th></tr></thead>
+          <thead><tr>
+            <th data-i18n="colIp">IP-Adresse</th>
+            <th data-i18n="colHostname">Hostname</th>
+            <th data-i18n="colDeviceType">Gerätetyp</th>
+          </tr></thead>
           <tbody id="devices-tbody"></tbody>
         </table>
       </div>
@@ -465,17 +568,24 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
           </svg>
-          Docker-Container
+          <span data-i18n="sectionDocker">Docker-Container</span>
         </div>
         <span class="badge" id="docker-badge">—</span>
       </div>
       <div class="filter-bar">
         <input class="search-input" type="text" id="docker-search" placeholder="Filtern nach Name, Image, Stack, Port…" oninput="onDockerSearch(this.value)" />
       </div>
-      <div class="filter-hint" id="docker-filter-hint" style="display:none">Aktiver Stack-Filter: <span class="hl-purple" id="docker-filter-label"></span> &nbsp;·&nbsp; Klick auf Stack zum Aufheben</div>
+      <div class="filter-hint" id="docker-filter-hint" style="display:none">
+        <span data-i18n="activeStackFilter">Aktiver Stack-Filter:</span> <span class="hl-purple" id="docker-filter-label"></span> &nbsp;·&nbsp; <span data-i18n="clickStackToRemove">Klick auf Stack zum Aufheben</span>
+      </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Container</th><th>Image</th><th>Ports</th><th>Stack</th></tr></thead>
+          <thead><tr>
+            <th data-i18n="colContainer">Container</th>
+            <th data-i18n="colImage">Image</th>
+            <th data-i18n="colPorts">Ports</th>
+            <th data-i18n="colStack">Stack</th>
+          </tr></thead>
           <tbody id="containers-tbody"></tbody>
         </table>
       </div>
@@ -487,7 +597,7 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
           </svg>
-          Stack-Gruppen
+          <span data-i18n="sectionStacks">Stack-Gruppen</span>
         </div>
         <span class="badge" id="stacks-badge">—</span>
       </div>
@@ -495,7 +605,7 @@
     </div>
   </div>
 
-  <footer>netscope · Netzwerk &amp; Container Inventar · <span id="scan-timestamp" style="color:var(--text-muted)"></span></footer>
+  <footer>netscope · <span data-i18n="footerDesc">Netzwerk &amp; Container Inventar</span> · <span id="scan-timestamp-footer" style="color:var(--text-muted)"></span></footer>
 </div>
 
 <div id="load-status" style="
@@ -505,27 +615,178 @@
   font-family:'DM Mono',monospace; font-size:0.75rem;
   color:var(--text-muted); z-index:100;
   box-shadow:0 4px 16px rgba(0,0,0,0.3);">
-  ⏳ Lade JSON-Daten …
+  ⏳ <span data-i18n="loadingData">Lade JSON-Daten …</span>
 </div>
-<script>
-// ── netscope – live fetch mode ────────────────────────────────────────────
-// Lädt JSON-Daten beim Seitenaufruf direkt vom Server.
-// Dateien erwartet im selben Verzeichnis wie die HTML:
-//   network_devices.json
-//   docker_containers.json
 
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// i18n – all strings hardcoded
+// ═══════════════════════════════════════════════════════════════════════════
+const TR = {
+  de: {
+    headerTitle: 'Infrastruktur-Übersicht',
+    headerSubtitle: 'Netzwerk & Container Inventar · 192.168.0.x',
+    loading: 'Lade Daten …',
+    sectionNetwork: 'Netzwerk-Geräte',
+    sectionDocker: 'Docker-Container',
+    sectionStacks: 'Stack-Gruppen',
+    colIp: 'IP-Adresse',
+    colHostname: 'Hostname',
+    colDeviceType: 'Gerätetyp',
+    colContainer: 'Container',
+    colImage: 'Image',
+    colPorts: 'Ports',
+    colStack: 'Stack',
+    netSearchPlaceholder: 'Filtern nach IP, Hostname, Typ…',
+    dockerSearchPlaceholder: 'Filtern nach Name, Image, Stack, Port…',
+    activeTypeFilter: 'Aktiver Typ-Filter:',
+    activeStackFilter: 'Aktiver Stack-Filter:',
+    clickToRemove: 'Klick zum Aufheben',
+    clickStackToRemove: 'Klick auf Stack zum Aufheben',
+    footerDesc: 'Netzwerk & Container Inventar',
+    loadingData: 'Lade JSON-Daten …',
+    loadError: 'Fehler beim Laden:',
+    unknown: 'unbekannt',
+    scanPrefix: 'Scan: ',
+    devices: 'Geräte',
+    containers: 'Container',
+    stacks: 'Stacks',
+    networkDevices: 'Netzwerk-Geräte',
+    dockerContainers: 'Docker-Container',
+    exposedPorts: 'Exponierte Ports',
+    iotDevices: 'IoT-Geräte',
+    unknownHosts: 'Unbekannte Hosts',
+    activeHosts: 'Aktive Hosts',
+    runningContainers: 'Laufende Container',
+    composeGroups: 'Compose-Gruppen',
+    withPortMapping: 'Mit Port-Mapping',
+    shellyAndCo: 'Shelly & Co.',
+    withoutHostname: 'Ohne Hostname',
+  },
+  en: {
+    headerTitle: 'Infrastructure Overview',
+    headerSubtitle: 'Network & Container Inventory · 192.168.0.x',
+    loading: 'Loading data …',
+    sectionNetwork: 'Network Devices',
+    sectionDocker: 'Docker Containers',
+    sectionStacks: 'Stack Groups',
+    colIp: 'IP Address',
+    colHostname: 'Hostname',
+    colDeviceType: 'Device Type',
+    colContainer: 'Container',
+    colImage: 'Image',
+    colPorts: 'Ports',
+    colStack: 'Stack',
+    netSearchPlaceholder: 'Filter by IP, hostname, type…',
+    dockerSearchPlaceholder: 'Filter by name, image, stack, port…',
+    activeTypeFilter: 'Active type filter:',
+    activeStackFilter: 'Active stack filter:',
+    clickToRemove: 'Click to remove',
+    clickStackToRemove: 'Click stack to remove',
+    footerDesc: 'Network & Container Inventory',
+    loadingData: 'Loading JSON data …',
+    loadError: 'Error loading:',
+    unknown: 'unknown',
+    scanPrefix: 'Scan: ',
+    devices: 'Devices',
+    containers: 'Containers',
+    stacks: 'Stacks',
+    networkDevices: 'Network Devices',
+    dockerContainers: 'Docker Containers',
+    exposedPorts: 'Exposed Ports',
+    iotDevices: 'IoT Devices',
+    unknownHosts: 'Unknown Hosts',
+    activeHosts: 'Active Hosts',
+    runningContainers: 'Running Containers',
+    composeGroups: 'Compose Groups',
+    withPortMapping: 'With Port Mapping',
+    shellyAndCo: 'Shelly & Co.',
+    withoutHostname: 'Without Hostname',
+  }
+};
+
+// Detect browser language, fallback to English
+const browserLang = (navigator.language || 'en').toLowerCase().startsWith('de') ? 'de' : 'en';
+let currentLang = browserLang;
+let detectedSubnet = null; // set after data loads, survives language switches
+
+function t(key) { return (TR[currentLang] || TR.en)[key] || key; }
+
+function applyTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.getAttribute('data-i18n'));
+  });
+  // Search placeholders
+  const ns = document.getElementById('net-search');
+  const ds = document.getElementById('docker-search');
+  if (ns) ns.placeholder = t('netSearchPlaceholder');
+  if (ds) ds.placeholder = t('dockerSearchPlaceholder');
+  // Lang button shows the OTHER language
+  document.getElementById('lang-label').textContent = currentLang === 'de' ? 'EN' : 'DE';
+  document.documentElement.setAttribute('lang', currentLang);
+  // Restore dynamic subnet in subtitle (data-i18n overwrites it above)
+  applySubnet();
+  // Re-render data if loaded
+  if (NETWORK_DEVICES.length || DOCKER_CONTAINERS.length) {
+    renderStats();
+    renderDevices();
+    renderContainers();
+    renderStacks();
+    if (NETWORK_DEVICES.length && NETWORK_DEVICES[0].scan) {
+      const ts = t('scanPrefix') + NETWORK_DEVICES[0].scan;
+      document.getElementById('scan-timestamp').textContent       = ts;
+      document.getElementById('scan-timestamp-footer').textContent = ts;
+    }
+  }
+}
+
+function applySubnet() {
+  if (!detectedSubnet) return;
+  document.querySelectorAll('[data-i18n="headerSubtitle"]').forEach(el => {
+    // Replace the placeholder x.x.x.x pattern with the real subnet
+    el.textContent = el.textContent.replace(/\d+\.\d+\.\d+\.x/, detectedSubnet);
+  });
+}
+
+function toggleLang() {
+  currentLang = currentLang === 'de' ? 'en' : 'de';
+  applyTranslations();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Theme
+// ═══════════════════════════════════════════════════════════════════════════
+let currentTheme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+
+function applyTheme(theme) {
+  currentTheme = theme;
+  document.documentElement.setAttribute('data-theme', theme === 'light' ? 'light' : '');
+  document.getElementById('icon-moon').style.display = theme === 'light' ? 'none' : 'block';
+  document.getElementById('icon-sun').style.display  = theme === 'light' ? 'block' : 'none';
+  document.getElementById('theme-label').textContent = theme === 'light' ? '🌙' : '☀';
+  // Logo stroke follows accent color
+  const logo = document.querySelector('.logo-mark svg');
+  if (logo) logo.setAttribute('stroke', theme === 'light' ? '#0969da' : '#58a6ff');
+}
+
+function toggleTheme() { applyTheme(currentTheme === 'dark' ? 'light' : 'dark'); }
+
+// Apply on load
+applyTheme(currentTheme);
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Data
+// ═══════════════════════════════════════════════════════════════════════════
 let NETWORK_DEVICES   = [];
 let DOCKER_CONTAINERS = [];
 
 async function loadData() {
   const statusEl = document.getElementById('load-status');
-
   async function fetchJSON(path) {
     const r = await fetch(path);
     if (!r.ok) throw new Error(`${path}: HTTP ${r.status}`);
     return r.json();
   }
-
   try {
     [NETWORK_DEVICES, DOCKER_CONTAINERS] = await Promise.all([
       fetchJSON('network_devices.json'),
@@ -536,23 +797,28 @@ async function loadData() {
     renderDevices();
     renderContainers();
     renderStacks();
-    // Zeitstempel aus den Daten lesen
-    if (NETWORK_DEVICES.length > 0 && NETWORK_DEVICES[0].scan) {
-      const raw = NETWORK_DEVICES[0].scan;
-      document.getElementById('scan-timestamp').textContent = 'Scan: ' + raw;
+    if (NETWORK_DEVICES.length && NETWORK_DEVICES[0].scan) {
+      const ts = t('scanPrefix') + NETWORK_DEVICES[0].scan;
+      document.getElementById('scan-timestamp').textContent       = ts;
+      document.getElementById('scan-timestamp-footer').textContent = ts;
+    }
+    // Derive subnet from first device IP (e.g. 192.168.1.42 → 192.168.1.x)
+    if (NETWORK_DEVICES.length && NETWORK_DEVICES[0].ip) {
+      detectedSubnet = NETWORK_DEVICES[0].ip.split('.').slice(0, 3).join('.') + '.x';
+      applySubnet();
     }
   } catch(err) {
-    statusEl.innerHTML = `<span style="color:var(--red)">⚠ Fehler beim Laden: ${err.message}</span>`;
+    statusEl.innerHTML = `<span style="color:var(--red)">⚠ ${t('loadError')} ${err.message}</span>`;
     statusEl.style.display = 'block';
     console.error(err);
   }
 }
 
 // ── State ──────────────────────────────────────────────────────────────────
-let activeStacks   = new Set(); // selected stack names
-let activeDevType  = null;      // selected device type from stat card
-let dockerSearchQ  = '';
-let netSearchQ     = '';
+let activeStacks  = new Set();
+let activeDevType = null;
+let dockerSearchQ = '';
+let netSearchQ    = '';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 function deviceChip(type) {
@@ -570,9 +836,9 @@ function deviceChip(type) {
 }
 
 function parsePorts(portsStr) {
-  if (!portsStr) return '<span style="color:var(--text-subtle);font-size:10px">—</span>';
+  if (!portsStr) return `<span style="color:var(--text-subtle);font-size:10px">—</span>`;
   const matches = [...portsStr.matchAll(/-> 0[.]0[.]0[.]0:([0-9]+)/g)];
-  if (!matches.length) return '<span style="color:var(--text-subtle);font-size:10px">—</span>';
+  if (!matches.length) return `<span style="color:var(--text-subtle);font-size:10px">—</span>`;
   return matches.map(m => `<span class="port-tag">:${m[1]}</span>`).join('');
 }
 
@@ -585,19 +851,18 @@ function shortName(name) {
   return name.replace(/-1$/, '').replace(/^[a-z]+-/, '');
 }
 
-// ── Render Devices ─────────────────────────────────────────────────────────
+// ── Render ─────────────────────────────────────────────────────────────────
 function renderDevices() {
   document.getElementById('devices-tbody').innerHTML = NETWORK_DEVICES.map(d => `
     <tr data-devtype="${d.device}">
       <td><span class="mono">${d.ip}</span></td>
-      <td>${d.hostname === 'N/A' ? '<span class="unknown-text">unbekannt</span>' : `<span class="hostname-cell">${d.hostname}</span>`}</td>
+      <td>${d.hostname === 'N/A' ? `<span class="unknown-text">${t('unknown')}</span>` : `<span class="hostname-cell">${d.hostname}</span>`}</td>
       <td>${deviceChip(d.device)}</td>
     </tr>`).join('');
-  document.getElementById('net-badge').textContent = NETWORK_DEVICES.length + ' Geräte';
+  document.getElementById('net-badge').textContent = NETWORK_DEVICES.length + ' ' + t('devices');
   applyNetFilter();
 }
 
-// ── Render Containers ──────────────────────────────────────────────────────
 function renderContainers() {
   document.getElementById('containers-tbody').innerHTML = DOCKER_CONTAINERS.map(d => `
     <tr data-stack="${d.stack || ''}">
@@ -606,11 +871,10 @@ function renderContainers() {
       <td class="ports-cell">${parsePorts(d.ports)}</td>
       <td>${d.stack ? `<span class="stack-chip">${d.stack}</span>` : '<span style="color:var(--text-subtle);font-size:10px">—</span>'}</td>
     </tr>`).join('');
-  document.getElementById('docker-badge').textContent = DOCKER_CONTAINERS.length + ' Container';
+  document.getElementById('docker-badge').textContent = DOCKER_CONTAINERS.length + ' ' + t('containers');
   applyDockerFilter();
 }
 
-// ── Render Stacks ──────────────────────────────────────────────────────────
 function renderStacks() {
   const stackMap = {};
   DOCKER_CONTAINERS.forEach(c => {
@@ -624,145 +888,105 @@ function renderStacks() {
       <div class="stack-name">${name}<span class="stack-count">${services.length}</span></div>
       <ul class="stack-services">${services.map(s => `<li class="stack-service-item">${shortName(s)}</li>`).join('')}</ul>
     </div>`).join('');
-  document.getElementById('stacks-badge').textContent = sorted.length + ' Stacks';
+  document.getElementById('stacks-badge').textContent = sorted.length + ' ' + t('stacks');
 }
 
-// ── Render Stats ───────────────────────────────────────────────────────────
 function renderStats() {
   const deviceTypes = {};
   NETWORK_DEVICES.forEach(d => { deviceTypes[d.device] = (deviceTypes[d.device]||0)+1; });
   const stackCount = new Set(DOCKER_CONTAINERS.filter(c=>c.stack).map(c=>c.stack)).size;
   const withPorts  = DOCKER_CONTAINERS.filter(c => c.ports).length;
 
-  // Which stat cards should be filterable by device type?
-  const statDeviceType = [null, null, null, null, 'IoT', 'Unknown'];
-
   const stats = [
-    { label: 'Netzwerk-Geräte',  value: NETWORK_DEVICES.length,   sub: 'Aktive Hosts',      cls: 'blue',   devtype: null },
-    { label: 'Docker-Container', value: DOCKER_CONTAINERS.length,  sub: 'Laufende Container', cls: 'green',  devtype: null },
-    { label: 'Stacks',           value: stackCount,                 sub: 'Compose-Gruppen',   cls: 'purple', devtype: null },
-    { label: 'Exponierte Ports', value: withPorts,                  sub: 'Mit Port-Mapping',  cls: 'orange', devtype: null },
-    { label: 'IoT-Geräte',       value: deviceTypes['IoT']||0,      sub: 'Shelly & Co.',      cls: 'orange', devtype: 'IoT' },
-    { label: 'Unbekannte Hosts', value: deviceTypes['Unknown']||0,  sub: 'Ohne Hostname',     cls: 'blue',   devtype: 'Unknown' },
+    { lk: 'networkDevices',  value: NETWORK_DEVICES.length,   sk: 'activeHosts',       cls: 'blue',   dt: null },
+    { lk: 'dockerContainers',value: DOCKER_CONTAINERS.length,  sk: 'runningContainers',  cls: 'green',  dt: null },
+    { lk: 'stacks',          value: stackCount,                 sk: 'composeGroups',      cls: 'purple', dt: null },
+    { lk: 'exposedPorts',    value: withPorts,                  sk: 'withPortMapping',    cls: 'orange', dt: null },
+    { lk: 'iotDevices',      value: deviceTypes['IoT']||0,      sk: 'shellyAndCo',        cls: 'orange', dt: 'IoT' },
+    { lk: 'unknownHosts',    value: deviceTypes['Unknown']||0,  sk: 'withoutHostname',    cls: 'blue',   dt: 'Unknown' },
   ];
 
   document.getElementById('stats-row').innerHTML = stats.map(s => {
-    const clickable = s.devtype ? `onclick="toggleDevType('${s.devtype}', this)"` : '';
-    const title     = s.devtype ? `title="Klicken zum Filtern nach ${s.devtype}"` : '';
-    return `
-    <div class="stat-card ${s.cls}" data-devtype="${s.devtype||''}" ${clickable} ${title}>
-      <div class="stat-label">${s.label}</div>
+    const click = s.dt ? `onclick="toggleDevType('${s.dt}', this)"` : '';
+    const title = s.dt ? `title="${t('activeTypeFilter')} ${t(s.lk)}"` : '';
+    return `<div class="stat-card ${s.cls}" data-devtype="${s.dt||''}" ${click} ${title}>
+      <div class="stat-label">${t(s.lk)}</div>
       <div class="stat-value">${s.value}</div>
-      <div class="stat-sub">${s.sub}</div>
+      <div class="stat-sub">${t(s.sk)}</div>
     </div>`;
   }).join('');
 }
 
-// ── Stack filter logic ─────────────────────────────────────────────────────
+// ── Filters ────────────────────────────────────────────────────────────────
 function toggleStack(event, stackName) {
   if (event.ctrlKey || event.metaKey) {
-    // Multi-select
-    if (activeStacks.has(stackName)) {
-      activeStacks.delete(stackName);
-    } else {
-      activeStacks.add(stackName);
-    }
+    activeStacks.has(stackName) ? activeStacks.delete(stackName) : activeStacks.add(stackName);
   } else {
-    // Single-select / toggle
-    if (activeStacks.size === 1 && activeStacks.has(stackName)) {
-      activeStacks.clear();
-    } else {
-      activeStacks.clear();
-      activeStacks.add(stackName);
-    }
+    if (activeStacks.size === 1 && activeStacks.has(stackName)) activeStacks.clear();
+    else { activeStacks.clear(); activeStacks.add(stackName); }
   }
   updateStackUI();
   applyDockerFilter();
 }
 
 function updateStackUI() {
-  document.querySelectorAll('.stack-block').forEach(el => {
-    el.classList.toggle('active', activeStacks.has(el.dataset.stack));
-  });
+  document.querySelectorAll('.stack-block').forEach(el =>
+    el.classList.toggle('active', activeStacks.has(el.dataset.stack)));
   const hint  = document.getElementById('docker-filter-hint');
   const label = document.getElementById('docker-filter-label');
-  if (activeStacks.size > 0) {
-    hint.style.display = 'block';
-    label.textContent  = [...activeStacks].join(', ');
-  } else {
-    hint.style.display = 'none';
-  }
-  // Update docker badge with visible count
-  const visible = document.querySelectorAll('#containers-tbody tr:not([style*="display: none"])').length;
-  const total   = DOCKER_CONTAINERS.length;
+  hint.style.display = activeStacks.size > 0 ? 'block' : 'none';
+  if (activeStacks.size > 0) label.textContent = [...activeStacks].join(', ');
+  const visible = [...document.querySelectorAll('#containers-tbody tr')].filter(r => r.style.display !== 'none').length;
   document.getElementById('docker-badge').textContent =
-    activeStacks.size > 0 ? `${visible} / ${total} Container` : `${total} Container`;
+    activeStacks.size > 0 ? `${visible} / ${DOCKER_CONTAINERS.length} ${t('containers')}` : `${DOCKER_CONTAINERS.length} ${t('containers')}`;
 }
 
-// ── Device type filter (stat cards) ───────────────────────────────────────
 function toggleDevType(devtype, cardEl) {
   if (activeDevType === devtype) {
     activeDevType = null;
     cardEl.classList.remove('active');
   } else {
-    // Deactivate any previously active stat card
     document.querySelectorAll('.stat-card.active').forEach(c => c.classList.remove('active'));
     activeDevType = devtype;
     cardEl.classList.add('active');
   }
   const hint  = document.getElementById('net-filter-hint');
   const label = document.getElementById('net-filter-label');
-  if (activeDevType) {
-    hint.style.display = 'block';
-    label.textContent  = activeDevType;
-  } else {
-    hint.style.display = 'none';
-  }
+  hint.style.display = activeDevType ? 'block' : 'none';
+  if (activeDevType) label.textContent = activeDevType;
   applyNetFilter();
 }
 
-// ── Apply Docker filter (stacks + search) ──────────────────────────────────
 function applyDockerFilter() {
   const q = dockerSearchQ.toLowerCase();
   document.querySelectorAll('#containers-tbody tr').forEach(row => {
-    const stackMatch = activeStacks.size === 0 || activeStacks.has(row.dataset.stack || '');
-    const textMatch  = !q || row.textContent.toLowerCase().includes(q);
-    row.style.display = (stackMatch && textMatch) ? '' : 'none';
+    const sm = activeStacks.size === 0 || activeStacks.has(row.dataset.stack || '');
+    const tm = !q || row.textContent.toLowerCase().includes(q);
+    row.style.display = (sm && tm) ? '' : 'none';
   });
-  // update badge after filter
   const visible = [...document.querySelectorAll('#containers-tbody tr')].filter(r => r.style.display !== 'none').length;
-  const total   = DOCKER_CONTAINERS.length;
   document.getElementById('docker-badge').textContent =
-    (activeStacks.size > 0 || q) ? `${visible} / ${total} Container` : `${total} Container`;
+    (activeStacks.size > 0 || q) ? `${visible} / ${DOCKER_CONTAINERS.length} ${t('containers')}` : `${DOCKER_CONTAINERS.length} ${t('containers')}`;
 }
 
-// ── Apply Network filter (devtype + search) ────────────────────────────────
 function applyNetFilter() {
   const q = netSearchQ.toLowerCase();
   document.querySelectorAll('#devices-tbody tr').forEach(row => {
-    const typeMatch = !activeDevType || row.dataset.devtype === activeDevType;
-    const textMatch = !q || row.textContent.toLowerCase().includes(q);
-    row.style.display = (typeMatch && textMatch) ? '' : 'none';
+    const tm = !activeDevType || row.dataset.devtype === activeDevType;
+    const qm = !q || row.textContent.toLowerCase().includes(q);
+    row.style.display = (tm && qm) ? '' : 'none';
   });
   const visible = [...document.querySelectorAll('#devices-tbody tr')].filter(r => r.style.display !== 'none').length;
-  const total   = NETWORK_DEVICES.length;
   document.getElementById('net-badge').textContent =
-    (activeDevType || q) ? `${visible} / ${total} Geräte` : `${total} Geräte`;
+    (activeDevType || q) ? `${visible} / ${NETWORK_DEVICES.length} ${t('devices')}` : `${NETWORK_DEVICES.length} ${t('devices')}`;
 }
 
-// ── Search input handlers ──────────────────────────────────────────────────
-function onDockerSearch(val) {
-  dockerSearchQ = val;
-  applyDockerFilter();
-}
+function onDockerSearch(val) { dockerSearchQ = val; applyDockerFilter(); }
+function onNetSearch(val)    { netSearchQ    = val; applyNetFilter(); }
 
-function onNetSearch(val) {
-  netSearchQ = val;
-  applyNetFilter();
-}
-
+// ── Init ───────────────────────────────────────────────────────────────────
+applyTranslations();
 loadData();
-
 </script>
 </body>
 </html>
