@@ -35,7 +35,7 @@ Visualisiert deine Infrastruktur – welche Geräte sind im Netzwerk, welche Doc
 
 ```bash
 # Repository klonen
-git clone https://github.com/DEIN-USERNAME/netscope.git
+git clone https://github.com/StanDaMan0505/netscope.git
 cd netscope
 
 # Environment-Variablen anpassen (optional)
