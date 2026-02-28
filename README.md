@@ -68,6 +68,15 @@ cd scripts/
 
 # Mit eigenem Subnetz
 SUBNET_OVERRIDE=192.168.1.0/24 ./scan_all.sh
+
+## ⚙️ Scan‑Parameter
+
+Die folgenden Umgebungsvariablen steuern erweiterte Optionen für `scan_network.sh`:
+
+- `ENABLE_AGGRESSIVE`: wenn gesetzt auf 1, werden aggressive Nmap‑Flags (`-PE -PA -PR -T4 --max-retries 1`) hinzugefügt.
+- `ENABLE_NSE`: wenn gesetzt auf 1, werden die Nmap‑Skripte `mdns-discovery,nbstat` ausgeführt.
+- `DNS_SERVERS`: Kommagetrennte Liste von DNS‑Servern, die zur Namensauflösung benutzt werden.
+
 ```
 
 Die Skripte schreiben standardmäßig nach `../data/` – das Dashboard lädt die Daten sofort nach Browser-Reload.
@@ -91,7 +100,6 @@ Die Skripte erkennen automatisch dein lokales Subnetz. Für manuelle Konfigurati
 # Als Umgebungsvariable
 SUBNET_OVERRIDE=10.0.0.0/24 ./scripts/scan_network.sh
 
-# Oder im Skript hardcoden (nicht empfohlen für GitHub)
 ```
 
 ---
